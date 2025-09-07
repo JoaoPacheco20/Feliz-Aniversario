@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <title>Surpresa</title>
     <style>
       @import url(https://fonts.googleapis.com/css?family=Lato:300italic);
 
@@ -57,7 +57,6 @@
         height: 35px;
         transform: translateY(-300px);
         backface-visibility: hidden;
-        animation: in 500ms 6s ease-out forwards;
       }
       .cake:after,
       .cake:before {
@@ -75,8 +74,15 @@
         top: 45%;
         left: 0;
       }
+      .animate-candle {
+      animation: in 500ms ease-out forwards;
+      }
+      @keyframes in {
+        to {
+          transform: translateY(0);
+        }
+      }
       
-
       /* ============================================== Fire */
       .fuego {
         border-radius: 100%;
@@ -263,7 +269,7 @@
         </path>
       <path fill="#a88679" d="M173.667,21.571c-33.174,0-111.467,0-147.334,0c-4,0-4-16.002,0-16.002c39.836,0,105.982,0,147.334,0
        C177.668,5.569,177.667,21.571,173.667,21.571z">
-          <animate id="bizcocho_1" attributeName="d" calcMode="spline" keySplines="0 0 1 1; 0 0 1 1; 0 0 1 1; 0.25 0 1 1; 0 0 1 1; 0 0 0.58 1" begin="2s" dur="0.8s" fill="freeze" values="
+          <animate id="bizcocho_1" attributeName="d" calcMode="spline" keySplines="0 0 1 1; 0 0 1 1; 0 0 1 1; 0.25 0 1 1; 0 0 1 1; 0 0 0.58 1" begin="indefinite" dur="0.8s" fill="freeze" values="
                                            M173.667,21.571c-33.174,0-111.467,0-147.334,0c-4,0-4-16.002,0-16.002c39.836,0,105.982,0,147.334,0
        C177.668,5.569,177.667,21.571,173.667,21.571z
                                            ;
@@ -338,7 +344,7 @@
 
     <div class="text dark-mode">
       <h1>Feliz Aniversário!</h1>
-      <p class="name">Random :D</p>
+      <p class="name">Agatha Cuevas</p>
     </div>
 
     <button id="toggleLightBtn">Acenda as Luzes</button>
@@ -350,20 +356,25 @@
     <audio id="audioFesta" src="https://actions.google.com/sounds/v1/party/party_cheering.ogg" preload="auto"></audio>
 
 <script>
-   const toggleLightBtn = document.getElementById("toggleLightBtn");
+  // Antes do evento clique, pegue as referências dos elementos / animações
+const boloFirstAnimate = document.getElementById("bizcocho_1");
+const boloLastAnimate = document.getElementById("bizcocho_3");
+const candle = document.querySelector(".cake");
+// Outras referências
+const toggleLightBtn = document.getElementById("toggleLightBtn");
 const body = document.body;
-const cake = document.querySelector(".cake");
 const cakeSvg = document.getElementById("cake");
 const textDiv = document.querySelector(".text");
 const textBlocks = document.querySelectorAll(".text");
 const audioFeliz = document.getElementById("audioFelizAniversario");
 const audioFesta = document.getElementById("audioFesta");
+
 let lightOn = false;
 
 toggleLightBtn.addEventListener("click", () => {
   if (!lightOn) {
-    // Acende as luzes
     body.classList.add("light-mode");
+
     cake.classList.add("visible");
     cakeSvg.classList.add("visible");
     textDiv.classList.remove("dark-mode");
@@ -372,6 +383,15 @@ toggleLightBtn.addEventListener("click", () => {
 
     toggleLightBtn.textContent = "Apagar Vela";
 
+    // Disparo da animação inicial do bolo
+    boloFirstAnimate.beginElement();
+
+    // Escuta o fim da animação do bolo para iniciar a vela
+    boloLastAnimate.addEventListener("endEvent", () => {
+      candle.classList.add("animate-candle");
+    }, { once: true });
+
+    // Tocar áudio feliz aniversário
     audioFeliz.currentTime = 0;
     const playPromise = audioFeliz.play();
     if (playPromise !== undefined) {
@@ -382,7 +402,7 @@ toggleLightBtn.addEventListener("click", () => {
 
     lightOn = true;
   } else {
-    // Apaga as velas
+    // Apaga as chamas da vela visualmente
     const chamas = document.querySelectorAll(".fuego");
     chamas.forEach(chama => (chama.style.display = "none"));
 
@@ -392,6 +412,7 @@ toggleLightBtn.addEventListener("click", () => {
     fireConfetti();
   }
 });
+
 
 function fireConfetti() {
   const duration = 5000;
